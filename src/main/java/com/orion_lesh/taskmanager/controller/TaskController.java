@@ -1,6 +1,7 @@
 package com.orion_lesh.taskmanager.controller;
 
 import com.orion_lesh.taskmanager.dto.request.CreateTaskRequest;
+import com.orion_lesh.taskmanager.dto.request.TaskFilter;          // ← новый импорт
 import com.orion_lesh.taskmanager.dto.request.UpdateTaskRequest;
 import com.orion_lesh.taskmanager.dto.response.TaskResponse;
 import com.orion_lesh.taskmanager.service.TaskService;
@@ -26,9 +27,12 @@ public class TaskController {
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
+    // ОБНОВЛЁННЫЙ метод
     @GetMapping
-    public Page<TaskResponse> findAll(Pageable pageable) {
-        return taskService.findAll(pageable);
+    public Page<TaskResponse> findAll(
+            @ModelAttribute TaskFilter filter,
+            Pageable pageable) {
+        return taskService.findAll(filter, pageable);
     }
 
     @GetMapping("/{id}")

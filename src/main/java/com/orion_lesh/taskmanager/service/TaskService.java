@@ -1,6 +1,7 @@
 package com.orion_lesh.taskmanager.service;
 
 import com.orion_lesh.taskmanager.dto.request.CreateTaskRequest;
+import com.orion_lesh.taskmanager.dto.request.TaskFilter;        // ← новый импорт
 import com.orion_lesh.taskmanager.dto.request.UpdateTaskRequest;
 import com.orion_lesh.taskmanager.dto.response.TaskResponse;
 import com.orion_lesh.taskmanager.entity.Category;
@@ -9,9 +10,11 @@ import com.orion_lesh.taskmanager.exception.ResourceNotFoundException;
 import com.orion_lesh.taskmanager.mapper.TaskMapper;
 import com.orion_lesh.taskmanager.repository.CategoryRepository;
 import com.orion_lesh.taskmanager.repository.TaskRepository;
+import com.orion_lesh.taskmanager.specification.TaskSpecifications;  // ← новый импорт
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;            // ← новый импорт
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,8 +38,9 @@ public class TaskService {
         return TaskMapper.toResponse(getTaskOrThrow(id));
     }
 
-    public Page<TaskResponse> findAll(Pageable pageable) {
-        return taskRepository.findAll(pageable)
+    public Page<TaskResponse> findAll(TaskFilter filter, Pageable pageable) {
+        Specification<Task> spec = TaskSpecifications.build(filter);
+        return taskRepository.findAll(spec, pageable)
                 .map(TaskMapper::toResponse);
     }
 
@@ -50,7 +54,6 @@ public class TaskService {
         task.setPriority(request.priority());
         task.setDueDate(request.dueDate());
         task.setCategory(resolveCategory(request.categoryId()));
-
 
         return TaskMapper.toResponse(task);
     }

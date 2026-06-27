@@ -5,6 +5,7 @@ import com.orion_lesh.taskmanager.entity.enums.TaskPriority;
 import com.orion_lesh.taskmanager.entity.enums.TaskStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -23,6 +24,11 @@ public interface TaskRepository
     @EntityGraph(attributePaths = {"category"})
     @Override
     Optional<Task> findById(Long id);
+
+
+    @EntityGraph(attributePaths = {"category"})
+    @Override
+    Page<Task> findAll(Specification<Task> spec, Pageable pageable);
 
     List<Task> findByStatus(TaskStatus status);
 
